@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default async function page() {
   const data = await FetchData();
-  console.log("data", data[0].slug);
+  // console.log("data", data[0].slug);
   return (
     <div className="flex gap-5 max-w-6xl m-auto text-white">
       {data.map((product: any, index: number) => (
