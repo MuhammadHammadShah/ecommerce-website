@@ -4,7 +4,7 @@ import { cartColumns, db } from "../../../../Database/Drizzle";
 export const POST = async (request: NextRequest) => {
   const req = await request.json();
   try {
-    const res = await db
+    const insertedData = await db
       .insert(cartColumns)
       .values({
         product_id: req.product_id,
@@ -16,10 +16,12 @@ export const POST = async (request: NextRequest) => {
       })
       .returning();
 
-    return NextResponse.json({ res });
-    console.log("Data posted to DataBase");
+    const insertedItem = insertedData[0]; // Extract the inserted item from the array
+
+    return NextResponse.json({ insertedItem });
   } catch (error) {
     console.log("Error while Posting to DataBase");
     console.log("error", error);
+    return NextResponse.json({ error: "Error while inserting data" });
   }
 };
