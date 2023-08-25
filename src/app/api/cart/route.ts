@@ -1,24 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cartColumns, db } from "../../../../Database/Drizzle";
-import { cookies } from "next/headers";
-import { v4 } from "uuid";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const POST = async (request: NextRequest) => {
   const req = await request.json();
 
-  const setCookies = cookies();
-  const uid = v4();
-  const user_id = setCookies.get("user_id")?.value as string;
-  console.log(user_id);
-  if (!user_id) {
-    setCookies.set("user_id", uid);
-  }
   try {
     const res = await db
       .insert(cartColumns)
       .values({
-        user_id: user_id,
+        user_id: req.user_id,
         product_id: req.product_id,
         product_title: req.product_title,
         image_url: req.image_url,
@@ -26,7 +17,7 @@ export const POST = async (request: NextRequest) => {
         product_quantity: req.product_quantity,
       })
       .onConflictDoUpdate({
-        target: cartColumns.product_title,
+        target: [cartColumns.product_title, cartColumns.user_id],
         set: {
           product_quantity: req.product_quantity,
           product_price: req.product_price,
@@ -54,5 +45,24 @@ export const GET = async (request: NextRequest) => {
   } catch (error) {
     console.log(error);
     return NextResponse.json(error);
+  }
+};
+
+export const DELETE = async (request: NextRequest) => {
+  const req = await request.json();
+  try {
+    const res = await db
+      .delete(cartColumns)
+      .where(
+        and(
+          eq(cartColumns.user_id, req.user_id),
+          eq(cartColumns.product_title, req.product_title)
+        )
+      )
+      .returning();
+    return NextResponse.json({ message: "Product succecssfully Deleted" });
+  } catch (error) {
+    console.log("Error removing item from cart", error);
+    return NextResponse.json({ message: "Error deleting Product" });
   }
 };
