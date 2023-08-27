@@ -24,7 +24,6 @@ export default function CartItems() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Cart</h1>
       {isSignedIn ? (
         <div className="grid gap-14">
           {products?.map((item: any, index: number) => (
@@ -62,7 +61,7 @@ export default function CartItems() {
         </div>
       ) : (
         <div>
-          <h1>Please Login First</h1>
+          <h1 className="text-slate-500 text-9xl">Please Login First</h1>
         </div>
       )}
     </div>

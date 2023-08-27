@@ -7,11 +7,11 @@ export default async function page() {
   const data = await FetchData();
   // console.log("data", data[0].slug);
   return (
-    <div className="flex gap-5 max-w-6xl m-auto text-white">
+    <div className="grid grid-cols-[repeat(2,auto)] lg:grid-cols-[repeat(4,auto)] justify-center gap-y-9 lg:gap-y-16 gap-x-10 lg:gap-x-32">
       {data.map((product: any, index: number) => (
         <Link
           href={`/product/${product.slug?.current}`}
-          className="w-1/4 border border-black p-2"
+          className="w-56 border border-black p-2"
           key={index}
         >
           <img
